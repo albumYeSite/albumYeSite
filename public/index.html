@@ -1,0 +1,51 @@
+<!-- feito por leonardo portilho, breno segaglio e guilherme zanaldo - 2o info turma 2 -->
+<!DOCTYPE html> <!-- diz ao navegador que é uma página html5 -->
+<html lang="pt-br"> <!-- raiz da página -->
+<head> <!-- configurações da página -->
+	<meta charset="UTF-8"> <!-- conjunto de caracteres -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ajusta a largura no celular -->
+	<title>albumYe</title> <!-- título da aba -->
+	<link rel="shortcut icon" type="image/png" href="media/dondaCover.png"> <!-- ícone da aba -->
+	<link rel="stylesheet" href="css/style.css"> <!-- liga o css -->
+</head>
+<body> <!-- corpo da página -->
+	<header class="header"> <!-- topo -->
+		<nav> <!-- menu -->
+			<button id="btnThemeId" class="btnTheme" aria-label="Alterar Tema"> <!-- botão do tema -->
+				<svg class="iconeTema" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"> <!-- ícone da lua -->
+					<path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/> <!-- desenho do ícone -->
+				</svg>
+			</button>
+			<ul class="navLinks"> <!-- lista de links -->
+				<li><a href="index.html">index</a></li> <!-- item e link da página atual -->
+				<li><a href="home.html" class="inativo">home</a></li> <!-- item e link para a home -->
+				<li><a href="formCard.html" class="inativo">criar</a></li> <!-- item e link para o formulário -->
+			</ul>
+		</nav>
+	</header>
+
+	<div class="container"> <!-- caixa geral -->
+		<div class="superior"> <!-- capa e informações -->
+			<img class="capaAlbum" src="media/TCDCover02.jpg" alt="Capa do Álbum The College Dropout do Kanye West, que é descrita como um humano fantasiado de mascote escolar caracterizado por um urso sentado numa arquibancada."> <!-- capa do álbum -->
+			<div class="cardPrincipal"> <!-- caixa dos textos -->
+				<h2 class="tituloAlbum">The College Dropout</h2> <!-- título do álbum -->
+				<a class="artistaAlbum" href="https://open.spotify.com/intl-pt/artist/5K4W6rqBFWDnAN6FQUkS6x?si=1T0Lx4BFQHyifdzNKO2ntg" target="_blank">Kanye West</a> <!-- link do artista -->
+				<h4 class="categoriasAlbum">Hip hop, Chipmunk soul</h4> <!-- gêneros -->
+				<a class="albumSpotify" href="https://open.spotify.com/intl-pt/album/4Uv86qWpGTxf7fU7lG5X6F?si=Hxojqm1eQdiEny0DyWTjqw" target="_blank"> <!-- botão com link do álbum no spotify -->
+					<span class="buttonInner"> <!-- centraliza o logo -->
+						<img class="logo" src="media/spotifyLogo.png" alt="spotify"> <!-- logo do spotify -->
+					</span>
+				</a>
+			</div>
+		</div>
+		<div class="cardDescricao"> <!-- caixa da descrição -->
+			<button class="mostrarDesc">+</button> <!-- botão que abre e fecha a descrição -->
+			<p class="descAlbum">The College Dropout é o álbum de estréia do artista americano de hip-hop Ye (anteriormente chamado Kanye West), lançado em 10 de fevereiro de 2004, pela Roc-A-Fella Records. Foi gravado durante um período de quatro anos, começando em 1999. Antes do lançamento do álbum, Ye tinha trabalhado em The Blueprint, do rapper Jay-Z, de 2001, que mostrou seu estilo melódico e soulful da produção do hip hop.<br>Produzido inteiramente por West, The College Dropout conta com a participação musical de Jay-Z, John Legend e Syleena Johnson. Descartando a persona gangster então dominante no hip hop, as letras de West sobre os temas do álbum preocupação da família, estudos, religião, auto-consciência, do materialismo e lutas pessoais.</p> <!-- texto da descrição -->
+		</div>
+	</div>
+
+	<script src="js/tema.js"></script> <!-- troca de tema -->
+	<script src="js/descricao.js"></script> <!-- botão + e - -->
+	<script src="js/api.js"></script> <!-- conversa com o servidor -->
+</body>
+</html>
