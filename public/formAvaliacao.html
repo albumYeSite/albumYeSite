@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>avaliacoes</title>
+	<link rel="shortcut icon" type="image/png" href="media/dondaCover.png">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<header class="header">
+		<nav>
+			<button id="btnThemeId" class="btnTheme" aria-label="Alterar Tema">
+				<svg class="iconeTema" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor">
+					<path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/>
+				</svg>
+			</button>
+			<ul class="navLinks">
+				<li><a href="index.html" class="inativo">index</a></li>
+				<li><a href="home.html" class="inativo">home</a></li>
+				<li><a href="formCard.html" class="inativo">criar card</a></li>
+				<li><a href="cadastros.html">cadastros</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<div class="containerForm">
+		<h2 class="tituloForm">avaliacoes</h2>
+		<form class="formCard" id="formCrud">
+			<div class="formDupla">
+				<label for="nota">nota:</label>
+				<input type="number" id="nota" placeholder="ex. 10" min="0" max="10" step="1" required>
+			</div>
+			<div class="formDupla">
+				<label for="dataAvaliacao">data da avaliação:</label>
+				<input type="date" id="dataAvaliacao" required>
+			</div>
+			<div class="formDupla">
+				<label for="comentario">comentário:</label>
+				<input type="text" id="comentario" placeholder="ex. comentário" maxlength="90" required>
+			</div>
+			<div class="formDupla">
+				<label for="usuario_idUsuario">usuário:</label>
+				<select id="usuario_idUsuario" required></select>
+			</div>
+			<div class="formDupla">
+				<label for="album_idAlbum">album:</label>
+				<select id="album_idAlbum" required></select>
+			</div>
+			<p class="aviso" id="aviso"></p>
+			<input class="btSubmit" type="submit" id="btSalvar" value="criar">
+			<button class="btCancelar" type="button" id="btCancelar" hidden>cancelar</button>
+		</form>
+	</div>
+
+	<div class="containerTabela">
+		<table class="tabelaCrud">
+			<thead>
+				<tr>
+					<th>usuário</th>
+					<th>album</th>
+					<th>nota</th>
+					<th>data</th>
+					<th>comentário</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="corpoTabela"></tbody>
+		</table>
+	</div>
+
+	<script src="js/tema.js"></script>
+	<script src="js/crud.js"></script>
+	<script src="js/crudAvaliacao.js"></script>
+</body>
+</html>

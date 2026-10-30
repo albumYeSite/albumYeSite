@@ -9,6 +9,13 @@ paginas
     index - card do album
     home - catalogo com os albuns
     formCard - cria um card novo
+    cadastros - links para as telas de crud
+    formUsuario - crud de usuarios
+    formArtista - crud de artistas
+    formAlbum - crud de albuns
+    formAvaliacao - crud de avaliacoes
+    formLista - crud de listas
+    formListaAlbum - crud dos albuns de cada lista
 
 planejado
     artista - perfil do artista com seus albuns

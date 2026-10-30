@@ -256,6 +256,76 @@ nav {
     background-color: #555;
 }
 
+.formDupla select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.formDupla select:focus {
+    outline: none;
+}
+
+.btCancelar {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.aviso {
+    margin: 10px 0 0;
+    color: red;
+    font-size: 14px;
+}
+
+.containerTabela {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 15px;
+    overflow-x: auto;
+}
+
+.tabelaCrud {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.tabelaCrud th, .tabelaCrud td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.btAcao {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.listaCadastros {
+    list-style: none;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 15px;
+    font-size: 24px;
+}
+
+.listaCadastros li {
+    margin-bottom: 15px;
+}
+
+.listaCadastros a {
+    color: var(--corTexto);
+}
+
 /* celular */
 @media (max-width: 768px) {
     .container {
