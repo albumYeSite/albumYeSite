@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+// ! novo, mysql2
+const mysql = require('mysql2');
 
 // serve a pasta public
 app.use(express.static(path.join(__dirname, 'public')));
@@ -8,8 +10,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // lê o corpo json das requisições post
 app.use(express.json());
 
+/* ! tirei a lista!!!!
 // lista guardada na memória do servidor
 let lista = ['Item 1', 'Item 2', 'Item 3'];
+*/
 
 // post: adiciona um item na lista
 app.post('/api/lista', (req, res) => {
@@ -22,8 +26,31 @@ app.post('/api/lista', (req, res) => {
     res.json({ status: 'sucesso', lista});
 });
 
+// ! comeãndo codigo conexao banco
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'ifsp',
+    database: 'mydb' // nome do seu schema
+})
+
+db.connect((erro)=>{
+    if(erro){
+        console.error(':(', erro);
+    }
+    else{
+        console.log('conectado ao banco!');
+    }
+});
+
 // get: devolve a lista (prof pediu tb)
 app.get('/api/lista', (req, res) => {
+    db.query('SELECT * FROM albuns', (erro, resultado)=>{
+        if(erro){
+            console.erro('erro ao recuperar albuns :(', error);
+            return res.status(500).json({erro: 'erro ao buscar dados'});
+        }
+    });
     res.json(lista);
 });
 

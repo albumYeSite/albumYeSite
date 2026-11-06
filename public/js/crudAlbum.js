@@ -1,5 +1,6 @@
 iniciarCrud({
     rota: '/api/albuns',
+    redirecionarPara: 'home.html',
     chave: ['idAlbum'],
     campos: ['nomeAlbum', 'linkAlbum', 'linkImagemAlbum', 'generoAlbum', 'descricaoAlbum', 'artista_idartista'],
     colunas: [

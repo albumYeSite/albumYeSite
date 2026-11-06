@@ -128,6 +128,11 @@ function iniciarCrud(config) {
                     aviso.textContent = dados.erro;
                     return;
                 }
+                // novo registro: vai para a página configurada (edição continua na tela)
+                if (!editando && config.redirecionarPara) {
+                    window.location.href = config.redirecionarPara;
+                    return;
+                }
                 cancelar();
                 carregar();
             })

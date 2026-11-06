@@ -1,12 +1,7 @@
-// cria cards pelo formulário e guarda no localStorage
-const formulario = document.getElementById('formCard');
+// mostra na home os cards do formCard (localStorage) e os álbuns do banco
 const colecao = document.getElementById('colecao');
 const galeria = JSON.parse(localStorage.getItem('galeria')) || [];
 
-// ids dos campos, na mesma ordem do construtor de ObraDeArte
-const campos = ['nomeAlbum', 'linkAlbum', 'nomeArtista', 'linkArtista', 'generoAlbum', 'descricaoAlbum', 'imagemAlbum', 'descricaoImagem'];
-
-// monta o html de um card
 function criarCard(album) {
     return `
     <div class="superior">
@@ -24,21 +19,25 @@ function criarCard(album) {
     </div>`;
 }
 
-// mostra os cards já salvos
+// cards criados pelo formCard
 galeria.forEach((album) => colecao.insertAdjacentHTML('beforeend', criarCard(album)));
 
-// envia o álbum novo para o servidor e volta ao index
-formulario.addEventListener('submit', (evento) => {
-    evento.preventDefault();
-
-    const novaObra = new ObraDeArte(...campos.map((id) => document.getElementById(id).value));
-
-    fetch('/api/lista', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(novaObra)
-    })
-        .then(() => {
-            window.location.href = 'index.html';
-        });
-});
+// álbuns criados pelo formAlbum (vêm do banco)
+Promise.all([
+    fetch('/api/albuns').then((r) => r.json()),
+    fetch('/api/artistas').then((r) => r.json())
+]).then(([albuns, artistas]) => {
+    albuns.forEach((a) => {
+        const artista = artistas.find((x) => x.idartista == a.artista_idartista) || {};
+        colecao.insertAdjacentHTML('beforeend', criarCard({
+            nomeAlbum: a.nomeAlbum,
+            linkAlbum: a.linkAlbum,
+            imagemAlbum: a.linkImagemAlbum,
+            descricaoImagem: 'capa do álbum ' + a.nomeAlbum,
+            generoAlbum: a.generoAlbum,
+            descricaoAlbum: a.descricaoAlbum,
+            nomeArtista: artista.nomeArtista || '',
+            linkArtista: artista.linkArtista || '#'
+        }));
+    });
+}).catch((erro) => console.log('erro ao carregar álbuns:', erro));
