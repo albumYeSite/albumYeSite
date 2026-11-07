@@ -1,43 +1,48 @@
-// mostra na home os cards do formCard (localStorage) e os álbuns do banco
 const colecao = document.getElementById('colecao');
-const galeria = JSON.parse(localStorage.getItem('galeria')) || [];
 
-function criarCard(album) {
-    return `
+function criarCard(album, artista) {
+    const card = document.createElement('div');
+    card.className = 'container';
+    card.innerHTML = `
     <div class="superior">
-      <img src="${album.imagemAlbum}" class="capaAlbum" alt="${album.descricaoImagem}">
-      <h2 class="tituloAlbum">${album.nomeAlbum}</h2>
-      <a href="${album.linkArtista}" class="artistaAlbum">${album.nomeArtista}</a>
-      <h4 class="categoriasAlbum">${album.generoAlbum}</h4>
-      <a href="${album.linkAlbum}" class="albumSpotify" target="_blank">
-        <span class="buttonInner"><img class="logo" src="media/spotifyLogo.png" alt="spotify"></span>
-      </a>
+      <img class="capaAlbum">
+      <div class="cardPrincipal">
+        <h2 class="tituloAlbum"></h2>
+        <a class="artistaAlbum" target="_blank"></a>
+        <h4 class="categoriasAlbum"></h4>
+        <a class="albumSpotify" target="_blank">
+          <span class="buttonInner"><img class="logo" src="media/spotifyLogo.png" alt="spotify"></span>
+        </a>
+      </div>
     </div>
     <div class="cardDescricao">
       <button class="mostrarDesc">+</button>
-      <p class="descAlbum">${album.descricaoAlbum}</p>
+      <p class="descAlbum"></p>
     </div>`;
+
+    const capa = card.querySelector('.capaAlbum');
+    capa.src = album.linkImagemAlbum;
+    capa.alt = 'capa do album ' + album.nomeAlbum;
+    card.querySelector('.tituloAlbum').textContent = album.nomeAlbum;
+    const linkArtista = card.querySelector('.artistaAlbum');
+    linkArtista.textContent = artista.nomeArtista || '';
+    linkArtista.href = artista.linkArtista || '#';
+    card.querySelector('.categoriasAlbum').textContent = album.generoAlbum;
+    card.querySelector('.albumSpotify').href = album.linkAlbum;
+    card.querySelector('.descAlbum').textContent = album.descricaoAlbum;
+    return card;
 }
 
-// cards criados pelo formCard
-galeria.forEach((album) => colecao.insertAdjacentHTML('beforeend', criarCard(album)));
-
-// álbuns criados pelo formAlbum (vêm do banco)
 Promise.all([
-    fetch('/api/albuns').then((r) => r.json()),
-    fetch('/api/artistas').then((r) => r.json())
+    fetch('/api/albuns').then((resposta) => resposta.json()),
+    fetch('/api/artistas').then((resposta) => resposta.json())
 ]).then(([albuns, artistas]) => {
-    albuns.forEach((a) => {
-        const artista = artistas.find((x) => x.idartista == a.artista_idartista) || {};
-        colecao.insertAdjacentHTML('beforeend', criarCard({
-            nomeAlbum: a.nomeAlbum,
-            linkAlbum: a.linkAlbum,
-            imagemAlbum: a.linkImagemAlbum,
-            descricaoImagem: 'capa do álbum ' + a.nomeAlbum,
-            generoAlbum: a.generoAlbum,
-            descricaoAlbum: a.descricaoAlbum,
-            nomeArtista: artista.nomeArtista || '',
-            linkArtista: artista.linkArtista || '#'
-        }));
+    if (albuns.length === 0) {
+        colecao.textContent = 'nenhum album cadastrado ainda';
+        return;
+    }
+    albuns.forEach((album) => {
+        const artista = artistas.find((item) => item.idartista === album.artista_idartista) || {};
+        colecao.appendChild(criarCard(album, artista));
     });
-}).catch((erro) => console.log('erro ao carregar álbuns:', erro));
+}).catch((erro) => console.log('erro ao carregar albuns:', erro));

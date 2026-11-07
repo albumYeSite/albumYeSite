@@ -10,29 +10,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // lê o corpo json das requisições post
 app.use(express.json());
 
-/* ! tirei a lista!!!!
-// lista guardada na memória do servidor
-let lista = ['Item 1', 'Item 2', 'Item 3'];
-*/
-
-// post: adiciona um item na lista
-app.post('/api/lista', (req, res) => {
-    lista.push(req.body);
-    res.json({ status: 'sucesso', lista });
-
-    //arquivo professora dentro do post
-    const novaObra = req.body;
-    lista.push(novaObra);
-    res.json({ status: 'sucesso', lista});
-});
-
-// ! comeãndo codigo conexao banco
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'ifsp',
-    database: 'mydb' // nome do seu schema
-})
+    password: '1911',
+    database: 'mydb', // nome do seu schema
+    dateStrings: true
+});
 
 db.connect((erro)=>{
     if(erro){
@@ -43,15 +27,20 @@ db.connect((erro)=>{
     }
 });
 
-// get: devolve a lista (prof pediu tb)
-app.get('/api/lista', (req, res) => {
-    db.query('SELECT * FROM albuns', (erro, resultado)=>{
-        if(erro){
-            console.erro('erro ao recuperar albuns :(', error);
-            return res.status(500).json({erro: 'erro ao buscar dados'});
-        }
-    });
-    res.json(lista);
+const banco = db.promise();
+
+app.get('/api/lista', async (req, res) => {
+    try {
+        const [resultado] = await banco.query('SELECT * FROM album');
+        res.json({ lista: resultado });
+    } catch (erro) {
+        console.error('erro ao recuperar albuns :(', erro);
+        res.status(500).json({ erro: 'erro ao buscar dados' });
+    }
+});
+
+app.post('/api/lista', (req, res) => {
+    res.json({ status: 'sucesso', recebido: req.body });
 });
 
 const tabelas = {
@@ -63,8 +52,7 @@ const tabelas = {
             nomeUsuario: { tipo: 'texto', max: 45 },
             emailUsuario: { tipo: 'texto', max: 90 },
             telUsuario: { tipo: 'texto', max: 15 }
-        },
-        usadoPor: [['avaliacao', 'usuario_idUsuario'], ['lista', 'usuario_idUsuario']]
+        }
     },
     artista: {
         rota: 'artistas',
@@ -72,10 +60,9 @@ const tabelas = {
         auto: true,
         campos: {
             nomeArtista: { tipo: 'texto', max: 45 },
-            linkArtista: { tipo: 'texto', max: 90 },
-            linkImagemArtista: { tipo: 'texto', max: 90 }
-        },
-        usadoPor: [['album', 'artista_idartista']]
+            linkArtista: { tipo: 'link', max: 90 },
+            linkImagemArtista: { tipo: 'link', max: 90 }
+        }
     },
     album: {
         rota: 'albuns',
@@ -83,13 +70,12 @@ const tabelas = {
         auto: true,
         campos: {
             nomeAlbum: { tipo: 'texto', max: 45 },
-            linkAlbum: { tipo: 'texto', max: 90 },
-            linkImagemAlbum: { tipo: 'texto', max: 90 },
+            linkAlbum: { tipo: 'link', max: 90 },
+            linkImagemAlbum: { tipo: 'link', max: 90 },
             generoAlbum: { tipo: 'texto', max: 45 },
             descricaoAlbum: { tipo: 'texto', max: 150 },
-            artista_idartista: { tipo: 'ref', ref: 'artista' }
-        },
-        usadoPor: [['avaliacao', 'album_idAlbum'], ['lista_album', 'album_idAlbum']]
+            artista_idartista: { tipo: 'ref' }
+        }
     },
     avaliacao: {
         rota: 'avaliacoes',
@@ -99,8 +85,8 @@ const tabelas = {
             nota: { tipo: 'numero', min: 0, max: 10 },
             dataAvaliacao: { tipo: 'data' },
             comentario: { tipo: 'texto', max: 90 },
-            usuario_idUsuario: { tipo: 'ref', ref: 'usuario' },
-            album_idAlbum: { tipo: 'ref', ref: 'album' }
+            usuario_idUsuario: { tipo: 'ref' },
+            album_idAlbum: { tipo: 'ref' }
         }
     },
     lista: {
@@ -110,7 +96,7 @@ const tabelas = {
         campos: {
             nomeLista: { tipo: 'texto', max: 45 },
             descricaoLista: { tipo: 'texto', max: 150 },
-            usuario_idUsuario: { tipo: 'ref', ref: 'usuario' }
+            usuario_idUsuario: { tipo: 'ref' }
         },
         cascata: [['lista_album', 'lista_idlista']]
     },
@@ -119,19 +105,11 @@ const tabelas = {
         chave: ['album_idAlbum', 'lista_idlista'],
         auto: false,
         campos: {
-            album_idAlbum: { tipo: 'ref', ref: 'album' },
-            lista_idlista: { tipo: 'ref', ref: 'lista' }
+            album_idAlbum: { tipo: 'ref' },
+            lista_idlista: { tipo: 'ref' }
         }
     }
 };
-
-const dados = {};
-const proximoId = {};
-
-Object.keys(tabelas).forEach((nome) => {
-    dados[nome] = [];
-    proximoId[nome] = 1;
-});
 
 function validar(tabela, corpo) {
     const valores = {};
@@ -144,10 +122,13 @@ function validar(tabela, corpo) {
             return { erro: campo + ' é obrigatório' };
         }
 
-        if (regra.tipo === 'texto') {
+        if (regra.tipo === 'texto' || regra.tipo === 'link') {
             const texto = String(bruto).trim();
             if (texto.length > regra.max) {
                 return { erro: campo + ' passa de ' + regra.max + ' caracteres' };
+            }
+            if (regra.tipo === 'link' && !/^https?:\/\//i.test(texto)) {
+                return { erro: campo + ' deve começar com http:// ou https://' };
             }
             valores[campo] = texto;
         } else if (regra.tipo === 'data') {
@@ -163,9 +144,8 @@ function validar(tabela, corpo) {
             valores[campo] = numero;
         } else {
             const numero = Number(bruto);
-            const chaveRef = tabelas[regra.ref].chave[0];
-            if (!dados[regra.ref].some((registro) => registro[chaveRef] === numero)) {
-                return { erro: campo + ' não existe' };
+            if (!Number.isInteger(numero) || numero < 1) {
+                return { erro: campo + ' inválido' };
             }
             valores[campo] = numero;
         }
@@ -174,63 +154,87 @@ function validar(tabela, corpo) {
     return { valores };
 }
 
+function erroDoBanco(res, erro) {
+    if (erro.errno === 1452) {
+        return res.status(400).json({ erro: 'registro relacionado não existe' });
+    }
+    if (erro.errno === 1451) {
+        const filha = /\(`[^`]+`\.`([^`]+)`/.exec(erro.sqlMessage || '');
+        return res.status(409).json({ erro: 'registro em uso' + (filha ? ' em ' + filha[1] : '') });
+    }
+    if (erro.errno === 1062) {
+        return res.status(409).json({ erro: 'registro já existe' });
+    }
+    console.error('erro no banco :(', erro);
+    res.status(500).json({ erro: 'erro no banco' });
+}
+
 function criarCrud(nome) {
     const tabela = tabelas[nome];
     const caminho = '/api/' + tabela.rota;
     const caminhoChave = caminho + tabela.chave.map((campo) => '/:' + campo).join('');
 
-    function achar(req) {
-        return dados[nome].find((registro) => tabela.chave.every((campo) => String(registro[campo]) === req.params[campo]));
+    function condicao(params) {
+        return {
+            sql: tabela.chave.map(() => '?? = ?').join(' AND '),
+            valores: tabela.chave.flatMap((campo) => [campo, params[campo]])
+        };
     }
 
-    function repetido(valores, ignorar) {
-        return dados[nome].some((registro) => registro !== ignorar && tabela.chave.every((campo) => registro[campo] === valores[campo]));
-    }
-
-    app.get(caminho, (req, res) => {
-        res.json(dados[nome]);
+    app.get(caminho, async (req, res) => {
+        try {
+            const [registros] = await banco.query('SELECT * FROM ?? ORDER BY ??', [nome, tabela.chave[0]]);
+            res.json(registros);
+        } catch (erro) {
+            erroDoBanco(res, erro);
+        }
     });
 
-    app.post(caminho, (req, res) => {
+    app.post(caminho, async (req, res) => {
         const resultado = validar(tabela, req.body || {});
         if (resultado.erro) return res.status(400).json(resultado);
-        if (!tabela.auto && repetido(resultado.valores, null)) {
-            return res.status(409).json({ erro: 'registro já existe' });
-        }
 
-        const registro = tabela.auto ? { [tabela.chave[0]]: proximoId[nome]++, ...resultado.valores } : resultado.valores;
-        dados[nome].push(registro);
-        res.status(201).json(registro);
+        try {
+            const [info] = await banco.query('INSERT INTO ?? (??) VALUES (?)', [
+                nome,
+                Object.keys(resultado.valores),
+                Object.values(resultado.valores)
+            ]);
+            const registro = tabela.auto ? { [tabela.chave[0]]: info.insertId, ...resultado.valores } : resultado.valores;
+            res.status(201).json(registro);
+        } catch (erro) {
+            erroDoBanco(res, erro);
+        }
     });
 
-    app.put(caminhoChave, (req, res) => {
-        const registro = achar(req);
-        if (!registro) return res.status(404).json({ erro: 'não encontrado' });
-
+    app.put(caminhoChave, async (req, res) => {
         const resultado = validar(tabela, req.body || {});
         if (resultado.erro) return res.status(400).json(resultado);
-        if (!tabela.auto && repetido(resultado.valores, registro)) {
-            return res.status(409).json({ erro: 'registro já existe' });
-        }
 
-        Object.assign(registro, resultado.valores);
-        res.json(registro);
+        const onde = condicao(req.params);
+
+        try {
+            const [info] = await banco.query('UPDATE ?? SET ? WHERE ' + onde.sql, [nome, resultado.valores, ...onde.valores]);
+            if (info.affectedRows === 0) return res.status(404).json({ erro: 'não encontrado' });
+            res.json(resultado.valores);
+        } catch (erro) {
+            erroDoBanco(res, erro);
+        }
     });
 
-    app.delete(caminhoChave, (req, res) => {
-        const registro = achar(req);
-        if (!registro) return res.status(404).json({ erro: 'não encontrado' });
+    app.delete(caminhoChave, async (req, res) => {
+        const onde = condicao(req.params);
 
-        const id = registro[tabela.chave[0]];
-        const emUso = (tabela.usadoPor || []).find(([outra, coluna]) => dados[outra].some((r) => r[coluna] === id));
-        if (emUso) return res.status(409).json({ erro: 'registro em uso em ' + emUso[0] });
-
-        (tabela.cascata || []).forEach(([outra, coluna]) => {
-            dados[outra] = dados[outra].filter((r) => r[coluna] !== id);
-        });
-
-        dados[nome].splice(dados[nome].indexOf(registro), 1);
-        res.json({ status: 'sucesso' });
+        try {
+            for (const [outra, coluna] of tabela.cascata || []) {
+                await banco.query('DELETE FROM ?? WHERE ?? = ?', [outra, coluna, req.params[tabela.chave[0]]]);
+            }
+            const [info] = await banco.query('DELETE FROM ?? WHERE ' + onde.sql, [nome, ...onde.valores]);
+            if (info.affectedRows === 0) return res.status(404).json({ erro: 'não encontrado' });
+            res.json({ status: 'sucesso' });
+        } catch (erro) {
+            erroDoBanco(res, erro);
+        }
     });
 }
 

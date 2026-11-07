@@ -1,8 +1,12 @@
 feito em trio: leonardo portilho de oliveira, breno segaglio muniz e guilherme zanaldo mana
 
 rodar
-    npm install
-    npm start
+    rodar mysql primeiro (root com schema mydb)
+    npm init
+    npm install express
+    npm install mysql2
+    npm start (acho que é node start, nao sei)
+
     abrir http://localhost:3000
 
 paginas
