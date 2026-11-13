@@ -17,11 +17,18 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
 
+DROP TABLE IF EXISTS `mydb`.`avaliacao` ;
+DROP TABLE IF EXISTS `mydb`.`lista_album` ;
+DROP TABLE IF EXISTS `mydb`.`lista` ;
+DROP TABLE IF EXISTS `mydb`.`album` ;
+DROP TABLE IF EXISTS `mydb`.`artista` ;
+DROP TABLE IF EXISTS `mydb`.`usuario` ;
+
 -- -----------------------------------------------------
 -- Table `mydb`.`usuario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`usuario` (
-  `idUsuario` INT NOT NULL,
+  `idUsuario` INT NOT NULL AUTO_INCREMENT,
   `nomeUsuario` VARCHAR(45) NULL,
   `emailUsuario` VARCHAR(90) NULL,
   `telUsuario` VARCHAR(15) NULL,
@@ -33,7 +40,7 @@ ENGINE = InnoDB;
 -- Table `mydb`.`artista`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`artista` (
-  `idartista` INT NOT NULL,
+  `idartista` INT NOT NULL AUTO_INCREMENT,
   `nomeArtista` VARCHAR(45) NULL,
   `linkArtista` VARCHAR(90) NULL,
   `linkImagemArtista` VARCHAR(90) NULL,
@@ -45,7 +52,7 @@ ENGINE = InnoDB;
 -- Table `mydb`.`album`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`album` (
-  `idAlbum` INT NOT NULL,
+  `idAlbum` INT NOT NULL AUTO_INCREMENT,
   `nomeAlbum` VARCHAR(45) NULL,
   `linkAlbum` VARCHAR(90) NULL,
   `linkImagemAlbum` VARCHAR(90) NULL,
@@ -66,11 +73,11 @@ ENGINE = InnoDB;
 -- Table `mydb`.`lista`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`lista` (
-  `idlista` INT NOT NULL,
+  `idlista` INT NOT NULL AUTO_INCREMENT,
   `nomeLista` VARCHAR(45) NULL,
   `descricaoLista` VARCHAR(150) NULL,
   `usuario_idUsuario` INT NOT NULL,
-  PRIMARY KEY (`idlista`, `usuario_idUsuario`),
+  PRIMARY KEY (`idlista`),
   INDEX `fk_lista_usuario1_idx` (`usuario_idUsuario` ASC) VISIBLE,
   CONSTRAINT `fk_lista_usuario1`
     FOREIGN KEY (`usuario_idUsuario`)
@@ -105,7 +112,7 @@ ENGINE = InnoDB;
 -- Table `mydb`.`avaliacao`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`avaliacao` (
-  `idavaliacao` INT NOT NULL,
+  `idavaliacao` INT NOT NULL AUTO_INCREMENT,
   `nota` INT(2) NULL,
   `dataAvaliacao` DATE NULL,
   `comentario` VARCHAR(90) NULL,
@@ -130,3 +137,98 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- 1) usuario
+INSERT INTO `usuario` (`idUsuario`, `nomeUsuario`, `emailUsuario`, `telUsuario`)
+VALUES
+(1, 'Leonardo Portilho de Oliveira', 'leoportilhoo@gmail.com', '11910723197'),
+(2, 'Breno Segaglio Muniz', 'breno.claraoparede@gmail.com', '11998722302'),
+(3, 'Guilherme Zanaldo Mana', 'gui.zanaura@gmail.com', '11998732303'),
+(4, 'Rafael Alves Oliveira', 'superRafael@gmail.com', '11998742304'),
+(5, 'Filipe Henrique da Silva Conceição', 'ConceicaoFofinhoFemboyBemgay@gmail.com', '11998752305'),
+(6, 'Heloá Portella da Silva', 'hPortella@gmail.com', '11998762306'),
+(7, 'João Pedro Favaretto Ferreira de Camargo', 'jpfavarrettp@gmail.com', '11998772307'),
+(8, 'Henrique Botas Boots', 'usoboots.botas@gmail.com', '11998782308'),
+(9, 'Enrico Comboia Semboia Boile', 'nadoSemBoia@gmail.com', '11998792309'),
+(10, 'Davi Bueno de Souza', 'deividsleepy@gmail.com', '11998802310'),
+(11, 'Frederico Theorodo Duarte', 'mrFred.beeSwarm@gmail.com', '11998812311'),
+(12, 'Tigre Onçudo Zanaldo Muniz', 'cacadoraOficialIfispiana@gmail.com', '11998822312'),
+(13, 'Gustavo Ribeiro Senna', 'grobweryuym.predador@gmail.com', '11998832313'),
+(14, 'Thermozzitos Tirafotos Ifiano', 'maiorFaDoNecroverion@gmail.com', '11998842314'),
+(15, 'Mario Carvalho Neto', 'palmerenseFaDa.Joelma@gmail.com', '11998852315');
+
+-- 2) artista
+INSERT INTO `artista` (`idartista`, `nomeArtista`, `linkArtista`, `linkImagemArtista`)
+VALUES
+(1, 'Kanye West', 'https://open.spotify.com/artist/5aX2kLm9QpR7tVwZ3nB8cD', 'https://picsum.photos/300'),
+(2, 'Kosky', 'https://open.spotify.com/artist/3fH7jNq1WsY4uEoT6gIa0b', 'https://picsum.photos/300'),
+(3, 'Kids See Ghosts', 'https://open.spotify.com/artist/6mC9vXz2LdK5pRtA8yQe1w', 'https://picsum.photos/300'),
+(4, 'Luis Barreto', 'https://open.spotify.com/artist/2gT5bNk8HcJ3rUxV7sPo4Z', 'https://picsum.photos/300'),
+(5, 'Westside Gunn', 'https://open.spotify.com/artist/7qW1eRy4UiO6pAsD9fGh2J', 'https://picsum.photos/300'),
+(6, 'Baianinho da Viola', 'https://open.spotify.com/artist/1zX3cVb5NmL7kJh9GfD2sA', 'https://picsum.photos/300'),
+(7, 'SPG', 'https://open.spotify.com/artist/4tY6uIo8PaS1dFg3HjK5lZ', 'https://picsum.photos/300'),
+(8, 'Deftones', 'https://open.spotify.com/artist/8wE2rTy4UiO6pAs9DfG1hJ', 'https://picsum.photos/300'),
+(9, 'Tame Impala', 'https://open.spotify.com/artist/0kL3mN5bV7cX9zQ2wE4rT6', 'https://picsum.photos/300'),
+(10, 'Radiohead', 'https://open.spotify.com/artist/9pO1iU3yT5rE7wQ2aS4dF6', 'https://picsum.photos/300'),
+(11, 'Nirvânia', 'https://open.spotify.com/artist/5hG7fD9sA1qW3eR5tY7uI9', 'https://picsum.photos/300'),
+(12, 'Arctic Monkey', 'https://open.spotify.com/artist/2lK4jH6gF8dS0aP2oI4uY6', 'https://picsum.photos/300'),
+(13, 'Joelma', 'https://open.spotify.com/artist/6nB8vC0xZ2mL4kJ6hG8fD0', 'https://picsum.photos/300'),
+(14, 'Charlie Kirk', 'https://open.spotify.com/artist/3eR5tY7uI9oP1aS3dF5gH7', 'https://picsum.photos/300'),
+(15, 'Mc Kevin', 'https://open.spotify.com/artist/7jK9lZ1xC3vB5nM7qW9eR1', 'https://picsum.photos/300');
+
+-- 3) album
+INSERT INTO `album` (`idAlbum`, `nomeAlbum`, `linkAlbum`, `linkImagemAlbum`, `generoAlbum`, `descricaoAlbum`, `artista_idartista`)
+VALUES
+(1, 'The College Dropout', 'https://open.spotify.com/album/1aB3cD5eF7gH9iJ1kL3mN5', 'https://picsum.photos/300', 'Hip hop', 'Álbum de estreia de Kanye West, lançado em 2004.', 1),
+(2, 'Late Registration', 'https://open.spotify.com/album/2bC4dE6fG8hI0jK2lM4nO6', 'https://picsum.photos/300', 'Hip hop', 'Segundo álbum de estúdio de Kanye West, lançado em 2005.', 1),
+(3, 'Graduation', 'https://open.spotify.com/album/3cD5eF7gH9iJ1kL3mN5oP7', 'https://picsum.photos/300', 'Hip hop', 'Terceiro álbum de Kanye West, lançado em 2007.', 1),
+(4, 'My Beautiful Dark Twisted Fantasy', 'https://open.spotify.com/album/4dE6fG8hI0jK2lM4nO6pQ8', 'https://picsum.photos/300', 'Hip hop', 'Quinto álbum de Kanye West, lançado em 2010.', 1),
+(5, 'Yeezus', 'https://open.spotify.com/album/5eF7gH9iJ1kL3mN5oP7qR9', 'https://picsum.photos/300', 'Hip hop', 'Álbum experimental de Kanye West, lançado em 2013.', 1),
+(6, 'The Life of Pablo', 'https://open.spotify.com/album/6fG8hI0jK2lM4nO6pQ8rS0', 'https://picsum.photos/300', 'Hip hop', 'Álbum de Kanye West lançado em 2016.', 1),
+(7, 'Donda', 'https://open.spotify.com/album/7gH9iJ1kL3mN5oP7qR9sT1', 'https://picsum.photos/300', 'Hip hop', 'Álbum de Kanye West lançado em 2021.', 1),
+(8, 'Kids See Ghosts', 'https://open.spotify.com/album/8hI0jK2lM4nO6pQ8rS0tU2', 'https://picsum.photos/300', 'Hip hop', 'Álbum da dupla Kanye West e Kid Cudi, lançado em 2018.', 3),
+(9, 'Controle de Pragas', 'https://open.spotify.com/album/9iJ1kL3mN5oP7qR9sT1uV3', 'https://picsum.photos/300', 'Rap', 'Single de Kosky com Lil Eazy e MM, lançado em 2024.', 2),
+(10, 'Luka Modric', 'https://open.spotify.com/album/0jK2lM4nO6pQ8rS0tU2vW4', 'https://picsum.photos/300', 'Rap', 'Single de Kosky com Lil Eazy, sua canção mais famosa, lançada em 2025.', 2),
+(11, 'Undertale (Soundtrack)', 'https://open.spotify.com/album/1kL3mN5oP7qR9sT1uV3wX5', 'https://picsum.photos/300', 'Trilha sonora de jogo', 'Trilha do jogo Undertale, composta por Toby Fox em 2015.', 4),
+(12, 'Celeste (Original Soundtrack)', 'https://open.spotify.com/album/2lM4nO6pQ8rS0tU2vW4xY6', 'https://picsum.photos/300', 'Trilha sonora de jogo', 'Trilha do jogo Celeste, composta por Lena Raine em 2018.', 5),
+(13, 'The Legend of Zelda: Ocarina of Time', 'https://open.spotify.com/album/6pQ8rS0tU2vW4xY6zA8bC0', 'https://picsum.photos/300', 'Trilha sonora de jogo', 'Trilha do jogo de 1998, composta por Koji Kondo.', 9),
+(14, 'Silent Hill 2 (Original Soundtrack)', 'https://open.spotify.com/album/9sT1uV3wX5yZ7aB9cD1eF3', 'https://picsum.photos/300', 'Trilha sonora de jogo', 'Trilha do jogo de terror de 2001, composta por Akira Yamaoka.', 12),
+(15, 'The Last of Us (Original Soundtrack)', 'https://open.spotify.com/album/2vW4xY6zA8bC0dE2fG4hI6', 'https://picsum.photos/300', 'Trilha sonora de jogo', 'Trilha do jogo de 2013, composta por Gustavo Santaolalla.', 15);
+
+-- 4) lista
+INSERT INTO `lista` (`idlista`, `nomeLista`, `descricaoLista`, `usuario_idUsuario`)
+VALUES
+(1, 'Era College Dropout', 'Os primeiros álbuns do Kanye West pra ouvir em ordem.', 1),
+(2, 'Ye para treinar', 'Álbuns do Kanye quase hard pra academia.', 2),
+(3, 'Música clássica', 'Músicas clássicas pra estudar.', 3),
+(4, 'Rock', 'Só Deftones e Radiohead.', 4),
+(5, 'Só Coldre', 'Álbuns do Kosky para ouvir jogando.', 5),
+(6, 'Trap e undergroud', 'Álbuns underground no estilo de trap.', 6),
+(7, 'Jogando e ouvindo Ye', 'Kanye West tocando de fundo durante as partidas.', 7),
+(8, 'Breakcore', 'Breakcore pra treinar ou estudar.', 8),
+(9, 'Favoritos do Ye', 'Meus álbuns preferidos do Ye.', 9),
+(10, 'Só Shittrap', 'SPG e Bonda.', 10),
+(11, 'SPG feliz', 'SPG feliz parecendo Kanye.', 11),
+(12, 'SPG animado', 'SPG falando sobre fezes.', 12),
+(13, 'SPG triste', 'SPG falando sobre coisas triste.', 13),
+(14, 'Yun Li', 'Trilogia inteira do Validation.', 14),
+(15, 'Top 10 do ano', 'Os álbuns que mais ouvi nesse ano.', 15);
+
+-- 5) avaliacao
+INSERT INTO `avaliacao` (`idavaliacao`, `nota`, `dataAvaliacao`, `comentario`, `usuario_idUsuario`, `album_idAlbum`)
+VALUES
+(1, 10, '2026-03-02', 'Clássico, melhor álbum do Ye dps de Donda.', 1, 1),
+(2, 9, '2026-03-05', 'Produção orquestral incrível mds.', 2, 2),
+(3, 8, '2026-03-09', 'Mas ele fez o graduation (emoji de choro).', 2, 3),
+(4, 10, '2026-03-14', 'Álbum mais bem trabalhado do Ye, slkk.', 9, 4),
+(5, 8, '2026-03-20', 'Diferente de tudo, demorei para gostar de algumas musicas.', 7, 5),
+(6, 8, '2026-04-01', 'Maravilhoso, essa produção sempre me pega.', 7, 6),
+(7, 10, '2026-04-10', 'Melhor álbum do ye, quem discorda tá errado.', 9, 7),
+(8, 9, '2026-04-15', 'Muito bom meu Deus, compete muito com Ye do Ye.', 11, 8),
+(9, 9, '2026-04-22', 'Melhor do Kosky mds.', 5, 9),
+(10, 8, '2026-05-03', 'mais famosa dele, ate enjoou.', 5, 10),
+(11, 7, '2026-05-11', 'mds enjoei dps de tanto youtuber usar.', 10, 11),
+(12, 9, '2026-05-18', 'Amo celeste.', 10, 12),
+(13, 8, '2026-06-02', 'enjoou dps de tanto tempo.', 3, 13),
+(14, 10, '2026-06-09', 'amo.', 3, 14),
+(15, 9, '2026-06-20', 'maravilhosa mds, se juntar com tlou 2 fica impecável.', 13, 15);

@@ -13,7 +13,7 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1911',
+    password: 'ifsp',
     database: 'mydb', // nome do seu schema
     dateStrings: true
 });
